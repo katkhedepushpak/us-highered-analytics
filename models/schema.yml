@@ -1,0 +1,78 @@
+version: 2
+
+models:
+  - name: stg_scorecard
+    description: "Typed, cleaned College Scorecard institution data. One row per institution."
+    columns:
+      - name: unitid
+        description: "IPEDS institution ID; the join key across all sources."
+        tests: [unique, not_null]
+
+  - name: stg_ipeds_institution
+    description: "IPEDS institutional characteristics. One row per institution."
+    columns:
+      - name: unitid
+        tests: [unique, not_null]
+
+  - name: stg_ipeds_enrollment
+    description: "IPEDS fall enrollment, collapsed from long format to one row per institution."
+    columns:
+      - name: unitid
+        tests: [unique, not_null]
+
+  - name: stg_ipeds_graduation
+    description: "IPEDS bachelor's graduation, collapsed to one row per institution."
+    columns:
+      - name: unitid
+        tests: [unique, not_null]
+      - name: grad_rate_150_ipeds
+        tests:
+          - between_0_and_1
+
+  - name: dim_control
+    description: "Institutional control (ownership) types."
+    columns:
+      - name: control_code
+        tests: [unique, not_null]
+
+  - name: dim_region
+    description: "BEA regions."
+    columns:
+      - name: region_code
+        tests: [unique, not_null]
+
+  - name: dim_institution
+    description: "One row per institution, with location, control, region and degree level."
+    columns:
+      - name: unitid
+        tests: [unique, not_null]
+      - name: control_code
+        tests:
+          - relationships:
+              to: ref('dim_control')
+              field: control_code
+      - name: region_code
+        tests:
+          - relationships:
+              to: ref('dim_region')
+              field: region_code
+
+  - name: fact_institution_outcomes
+    description: "Outcome, cost, earnings and enrollment measures. One row per institution."
+    columns:
+      - name: unitid
+        description: "Foreign key to dim_institution."
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              to: ref('dim_institution')
+              field: unitid
+      - name: admission_rate
+        tests: [between_0_and_1]
+      - name: retention_rate_ft
+        tests: [between_0_and_1]
+      - name: grad_rate_150_sc
+        tests: [between_0_and_1]
+      - name: pell_grant_share
+        tests: [between_0_and_1]

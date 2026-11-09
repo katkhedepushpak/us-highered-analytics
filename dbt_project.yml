@@ -1,0 +1,20 @@
+name: higher_ed_analytics
+version: "1.0.0"
+config-version: 2
+profile: higher_ed_analytics
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+vars:
+  raw_dir: raw
+
+models:
+  higher_ed_analytics:
+    bronze:
+      +materialized: view
+    silver:
+      +materialized: view
+    gold:
+      +materialized: table
