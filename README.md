@@ -73,6 +73,44 @@ dimensions, a custom 0-1 range test on rates, and a cross-source reconciliation 
 Scorecard graduation rate: correlation 0.965, median gap 2.3 points across 1,713 institutions; the
 31 institutions above a 15-point gap are small colleges with volatile cohorts and surface as a warning).
 
+## Power BI semantic model
+The gold CSVs in `exports/` load into Power BI as a star schema. Relationships (single direction, dimension filters fact):
+`dim_institution[unitid]` to `fact_institution_outcomes[unitid]`, `dim_control[control_code]` to `dim_institution[control_code]`, `dim_region[region_code]` to `dim_institution[region_code]`.
+The report page is filtered to bachelor's-predominant institutions, because the graduation-rate data only applies to four-year schools. Setup files are in `powerbi/` (`load_tables.m`, `measures.dax`, `QUICKSTART.md`).
+
+### DAX measures
+```dax
+Institutions = DISTINCTCOUNT ( fact_institution_outcomes[unitid] )
+
+Avg Grad Rate = AVERAGE ( fact_institution_outcomes[grad_rate_150_sc] )
+
+Avg Retention = AVERAGE ( fact_institution_outcomes[retention_rate_ft] )
+
+Avg Net Price = AVERAGE ( fact_institution_outcomes[avg_net_price] )
+
+Median Earnings 10yr = MEDIAN ( fact_institution_outcomes[median_earnings_10yr] )
+
+Grad Rate National =
+CALCULATE (
+    [Avg Grad Rate],
+    ALL ( dim_institution ),
+    dim_institution[predominant_degree] = "Bachelor's"
+)
+
+Grad Rate Gap vs National = [Avg Grad Rate] - [Grad Rate National]
+```
+
+| Measure | What it does |
+|---|---|
+| `Institutions` | Count of institutions in the current filter context |
+| `Avg Grad Rate` | Unweighted average 150%-time graduation rate; institutions with no reported value are skipped |
+| `Avg Retention`, `Avg Net Price` | Unweighted averages of first-year retention and average net price |
+| `Median Earnings 10yr` | Median of institutions' median earnings ten years after enrollment |
+| `Grad Rate National` | Baseline that ignores user filters: `ALL(dim_institution)` clears the state, region, and control filters, and the bachelor's filter is re-applied so the comparison is like-for-like |
+| `Grad Rate Gap vs National` | Current selection minus the national baseline (for Oregon, about +1.9 points) |
+
+Expected values with the bachelor's filter (checked against the exported data): Oregon has 26 institutions, a 56.4% average graduation rate against a 54.5% national baseline, and median earnings of $57,671 against $53,781.
+
 ## Run it
 ```bash
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate

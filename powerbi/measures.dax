@@ -1,0 +1,25 @@
+// Create each as a New measure (Home > New measure) on the table fact_institution_outcomes.
+// Paste one at a time. Names and table references must match exactly.
+
+Institutions = DISTINCTCOUNT ( fact_institution_outcomes[unitid] )
+
+Avg Grad Rate = AVERAGE ( fact_institution_outcomes[grad_rate_150_sc] )
+
+Avg Retention = AVERAGE ( fact_institution_outcomes[retention_rate_ft] )
+
+Avg Net Price = AVERAGE ( fact_institution_outcomes[avg_net_price] )
+
+Median Earnings 10yr = MEDIAN ( fact_institution_outcomes[median_earnings_10yr] )
+
+// National baseline: ALL() removes the filters on dim_institution, so this stays
+// fixed when a user filters to a state, region, or control type. ALL() also clears
+// the page filter on degree level, so we re-apply Bachelor's to keep the comparison
+// like-for-like (otherwise the baseline would include non-bachelor's institutions).
+Grad Rate National =
+CALCULATE (
+    [Avg Grad Rate],
+    ALL ( dim_institution ),
+    dim_institution[predominant_degree] = "Bachelor's"
+)
+
+Grad Rate Gap vs National = [Avg Grad Rate] - [Grad Rate National]
