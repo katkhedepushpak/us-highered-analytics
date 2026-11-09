@@ -78,6 +78,11 @@ The gold CSVs in `exports/` load into Power BI as a star schema. Relationships (
 `dim_institution[unitid]` to `fact_institution_outcomes[unitid]`, `dim_control[control_code]` to `dim_institution[control_code]`, `dim_region[region_code]` to `dim_institution[region_code]`.
 The report page is filtered to bachelor's-predominant institutions, because the graduation-rate data only applies to four-year schools. Setup files are in `powerbi/` (`load_tables.m`, `measures.dax`, `QUICKSTART.md`).
 
+### Dashboard layout (mockup)
+![Dashboard layout mockup](docs/dashboard_mockup.png)
+
+*This is an illustrative mockup, not a Power BI screenshot. It is rendered from the exported gold tables with the Oregon-only slicer on, so the values are real (26 institutions, 56.4% average graduation rate vs. a 54.5% national baseline, $57,671 median earnings), but visual styling in Power BI will differ and the map outline is schematic.*
+
 ### DAX measures
 ```dax
 Institutions = DISTINCTCOUNT ( fact_institution_outcomes[unitid] )
