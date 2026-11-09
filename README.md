@@ -81,7 +81,7 @@ The report page is filtered to bachelor's-predominant institutions, because the 
 ### Dashboard
 ![Power BI report: Oregon vs. national](docs/dashboard.png)
 
-*Screenshot of the report built in Power BI (web) on the gold tables, with the Oregon-only slicer on and the page filtered to bachelor's-granting institutions. The cards show 26 institutions, a 56.4% average graduation rate against a 54.5% national baseline (a 1.9-point gap), and median earnings of $57,670; the scatter plots net price against median earnings, colored by control type. The semantic model was loaded from an Excel workbook of the exported tables (`powerbi/higher_ed_powerbi.xlsx`). An illustrative layout mockup is also available at `docs/dashboard_mockup.png`.*
+*Screenshot of the report built in Power BI (web) on the gold tables, with the Oregon-only slicer on and the page filtered to bachelor's-granting institutions. The cards show 26 institutions, a 56.4% average graduation rate against a 54.5% national baseline (a 1.9-point gap), and median earnings of $57,671; the scatter plots net price against median earnings, colored by control type. The semantic model was loaded from an Excel workbook of the exported tables (`powerbi/higher_ed_powerbi.xlsx`). An illustrative layout mockup is also available at `docs/dashboard_mockup.png`.*
 
 ### DAX measures
 ```dax
